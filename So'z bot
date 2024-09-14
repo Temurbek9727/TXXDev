@@ -1,0 +1,31 @@
+import telebot
+
+# Bot tokeni (uni BotFather orqali olasiz)
+bot = telebot.TeleBot('7014448700:AAEMt_V3WP_ozLyxSZCYB3nLaDDXyer7m6w')
+
+# Foydalanuvchidan so'zni so'rash uchun funksiya
+@bot.message_handler(commands=['start'])
+def start_message(message):
+    bot.send_message(message.chat.id, "Salom! So'zni kiriting:")
+    bot.register_next_step_handler(message, ask_for_count)
+
+# So'zni olgandan keyin necha marta chiqarishni so'raydi
+def ask_for_count(message):
+    word = message.text
+    bot.send_message(message.chat.id, "Necha marta chiqarishni xohlaysiz?")
+    bot.register_next_step_handler(message, repeat_word, word)
+
+# So'zni kerakli miqdorda chiqarish
+def repeat_word(message, word):
+    try:
+        # Takrorlash sonini olish
+        count = int(message.text)
+
+        # So'zni ko'rsatilgan miqdorda yangi qatorlarda chiqarish
+        repeated_word = (word + '\n') * count
+        bot.send_message(message.chat.id, repeated_word.strip())
+    except ValueError:
+        bot.send_message(message.chat.id, "Iltimos, to'g'ri son kiriting.")
+
+# Botni ishga tushirish
+bot.polling()
